@@ -4,26 +4,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gem_project/core/styles/app_colors.dart';
 import 'package:gem_project/core/widgets/custom_button_widget.dart';
 import 'package:gem_project/core/widgets/custom_text_form_field.dart';
+import 'package:gem_project/view/widgets/manual_id_verification_form_widget.dart';
 import 'package:gem_project/view/widgets/state_card_item_widget.dart';
 
 import '../../core/styles/app_text_style.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-
-  late final TextEditingController manualVerifyController;
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    manualVerifyController=TextEditingController();
-  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -112,19 +100,11 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
 SizedBox(height: 24.h,),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: CustomTextFormField(textEditingController: manualVerifyController, obscureText: false, title: 'Manual verify by ID', hintText: 'Enter The Guest ID', titleExist: true),
-            )
+ManualIdVerificationFormWidget()
           ],
         ),
       ),
     );
   }
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-    manualVerifyController.clear();
-  }
+
 }
