@@ -5,6 +5,11 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// Opt-in side-by-side release for device testing; regular builds keep their ID.
+val isPreviewBuild = providers.gradleProperty("eemPreview")
+    .map { it.toBoolean() }
+    .getOrElse(false)
+
 android {
     namespace = "com.example.gem_project"
     compileSdk = flutter.compileSdkVersion
@@ -22,6 +27,7 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.example.gem_project"
+        manifestPlaceholders["appLabel"] = "EEM"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -32,6 +38,10 @@ android {
 
     buildTypes {
         release {
+            if (isPreviewBuild) {
+                applicationIdSuffix = ".preview"
+                manifestPlaceholders["appLabel"] = "EEM Preview"
+            }
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.getByName("debug")

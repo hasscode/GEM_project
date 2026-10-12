@@ -1,201 +1,132 @@
-# 🎓 EEM - Events Entry Manager
+# EEM — Events Entry Manager
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white" />
-  <img src="https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white" />
-  <img src="https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white" />
-  <img src="https://img.shields.io/badge/BLoC-E535AB?style=for-the-badge" />
-</p>
+تطبيق Flutter لتسجيل حضور مناسبات التخرج والأفراح. الواجهة عربية واتجاهها RTL،
+بالكحلي والنعناعي. النسخة الحالية تعمل محليًا ببيانات تجريبية؛ لا يوجد خادم متصل.
 
-A modern Flutter application for managing event guest entries with QR code verification, real-time statistics, and Excel/CSV data import.
+## تشغيل وتجربة
 
----
+يتطلب Dart 3.9.2 أو أحدث وFlutter متوافقًا. بيئة التحقق: Flutter 3.41.9.
 
-## ✨ Features
-
-- 📊 **Real-time Dashboard** - Live statistics for total, verified, and remaining guests
-- 📁 **Excel/CSV Import** - Bulk import guest lists from spreadsheet files
-- 📱 **QR Code Verification** - Fast and secure guest entry verification
-- 👥 **Guest Management** - Track guests and their companions
-- 💾 **Offline-First** - SQLite local database for reliability
-- 🎨 **Modern UI** - Beautiful glassmorphic design with smooth animations
-- 🎯 **Multi-Event Support** - Perfect for graduations, weddings, conferences, and any event
-
----
-
-## 🎪 Use Cases
-
-- 🎓 Graduation ceremonies
-- 💍 Weddings & celebrations
-- 🏢 Corporate events & conferences
-- 🎉 Private parties & gatherings
-- 🎭 Concerts & exhibitions
-- 🏆 Award ceremonies
-
----
-
-## 🛠️ Tech Stack
-
-| Category | Technology |
-|----------|------------|
-| **Framework** | Flutter 3.x |
-| **Language** | Dart |
-| **State Management** | BLoC/Cubit |
-| **Database** | SQLite (sqflite) |
-| **Architecture** | Repository Pattern + DAO |
-| **UI Components** | Custom Glassmorphic Widgets |
-| **File Handling** | Excel, CSV, File Picker |
-
----
-
-## 📱 Screenshots
-
-> Add screenshots here
-
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Flutter SDK (3.0+)
-- Dart SDK (3.0+)
-- Android Studio / VS Code
-- Git
-
-### Installation
-
-1. **Clone the repository**
-```bash
-git clone https://github.com/YOUR_USERNAME/GEM_project.git
-cd GEM_project
-```
-
-2. **Install dependencies**
-```bash
+```sh
 flutter pub get
-```
-
-3. **Run the app**
-```bash
 flutter run
 ```
 
----
+1. افتح «التجربة»، ثم «توليد ٤ ضيوف تجريبيين».
+2. افتح تذكرة QR واعرضها على جهاز آخر لمسحها. أو انسخ رمزها والصقه في شاشة المسح لتجربة الجهاز الواحد.
+3. أحمد وسارة ويوسف سجلات مكتملة. مريم بدون مكان عمدًا، لاختبار البحث ومراجعة البيانات.
+4. أول دخول صحيح يعرض Accepted ويسجل الحضور والوقت. التكرار يعرض «حاضر بالفعل».
+5. ابحث بالاسم أو جزء منه، أو بالرقم القومي كاملًا. الأرقام العربية مدعومة.
+6. أغلق التطبيق وافتحه: البيانات والحضور محفوظان.
+7. إعادة توليد التجربة تتطلب تأكيدًا وتمسح حضور المناسبة التجريبية فقط.
 
-## 📂 Project Structure
+كل أرقام الهوية التجريبية تبدأ بأصفار، وليست أرقامًا قومية حقيقية.
+السجل الناقص لا يقبل تلقائيًا؛ تعرض الشاشة الحقول التي تحتاج مراجعة.
+صفحة البحث للعرض والتحقق فقط، ولا تمنح تجاوزًا يدويًا لسياسة الحضور.
+
+### APK Release للتجربة على Android
+
+لبناء نسخة منفصلة لا تتعارض مع التطبيق القديم:
+
+```sh
+flutter build apk --release --android-project-arg=eemPreview=true
 ```
+
+الناتج `build/app/outputs/flutter-apk/app-release.apk`، باسم **EEM Preview**
+ومعرف `com.example.gem_project.preview`. هذه نسخة Release عامة لمعمارية
+ARM وARM64 وx86_64، وتبدأ بقاعدة بيانات مستقلة؛ ولّد الضيوف من صفحة التجربة.
+لا تحتاج حذف التطبيق القديم، ولا تنتقل بياناته تلقائيًا إلى نسخة التجربة.
+بدون الخيار `eemPreview=true` يظل الاسم ومعرف الحزمة الأصليان دون تغيير.
+
+إعداد Release الحالي يستخدم مفتاح التطوير المحلي للتثبيت المباشر فقط؛
+النشر على المتجر يحتاج مفتاح توقيع Release محفوظًا بشكل آمن.
+تحديث نسخة Preview لاحقًا يحتاج نفس المفتاح؛ التحويل من Debug إلى Release
+وحده لا يعالج تعارض توقيع حزمة موجودة.
+
+## المعمارية
+
+```text
 lib/
-├── model/
-│   ├── data_source/
-│   │   ├── database_helper.dart
-│   │   ├── guest_local_data_source.dart (DAO)
-│   │   └── services/
-│   │       └── excel_import_service.dart
-│   ├── models/
-│   │   └── guest_model.dart
-│   └── repositories/
-│       └── guest_repository.dart
-├── view/
-│   ├── screens/
-│   │   ├── splash_screen.dart
-│   │   ├── data_initialization_page.dart
-│   │   ├── guest_list_screen.dart
-│   │   └── dashboard_screen.dart
-│   └── widgets/
-├── view_model/
-│   ├── initialization_cubit/
-│   ├── dashboard_cubit/
-│   ├── scan_cubit/
-│   └── guest_list_cubit/
-├── core/
-│   ├── styles/
-│   └── widgets/
-└── main.dart
+  app/                 composition root, routing, theme
+  core/
+    database/          SQLite schema and migration
+    widgets/           shared visual components
+  features/
+    guests/
+      domain/          immutable models and repository contract
+      data/            DTO, demo source, local source, repository implementation
+      presentation/    event Cubit and guest details/cards
+    check_in/
+      domain/          QR payload, check-in use case and typed outcomes
+      presentation/    scan Cubit, camera, manual input and result dialog
+    guest_lookup/
+      domain/          Arabic normalization and search policy
+      presentation/    search and incomplete-record filters
+    dashboard/         local statistics
+    demo_data/         generation and QR ticket display
+    sync/domain/       future backend gateway contract
 ```
 
----
+Presentation depends on domain contracts; SQLite and demo details are wired in
+`app/dependencies.dart`. Domain has no Flutter, SQLite or networking imports.
+Cubit dependencies are constructor-injected. Widgets have separate files,
+async work checks closure, refresh retains existing data, and stale loads are ignored.
+The previous model/view/view_model implementation and Excel flow were replaced.
 
-## 🏗️ Architecture
+## التخزين والحضور
 
-This project follows **Clean Architecture** principles with clear separation of concerns:
+- ملف `gem.db` بإصدار 2، وجدولا `events` و`event_guests`.
+- المفتاح المركب `event_id + guest_id` يمنع خلط المناسبات.
+- `checked_in`, `checked_in_at`, `pending_sync` محفوظة على القرص.
+- القراءة والتحقق وتحديث الحضور داخل transaction واحدة؛ لا يقبل مسحان متزامنان نفس الضيف.
+- استيراد/استبدال التجربة transaction واحدة، وأي فشل يعيد البيانات السابقة.
+- الترحيل من إصدار 1 يحتفظ بالجدول الأصلي وينسخ الحضور إلى مناسبة «قائمة الضيوف السابقة».
+  الرقم القومي القديم غير متاح في المخطط السابق، فيظل فارغًا ويظهر ضمن البيانات الناقصة.
+- يمكن اختيار المناسبة من لوحة المتابعة عند وجود أكثر من قائمة.
+- القوائم والإحصائيات لعدد الضيوف الأساسيين، لا مجموع المرافقين.
+- الإحصائيات لقطة محلية تُحدّث بعد كل تسجيل حضور وعند إعادة التحميل.
 
-- **Model Layer**: Data sources, repositories, and business entities
-- **View Layer**: UI components and screens
-- **ViewModel Layer**: BLoC/Cubit for state management
-```
-┌─────────────┐
-│     UI      │ ← Screens & Widgets
-└──────┬──────┘
-       ↓
-┌─────────────┐
-│   BLoC      │ ← State Management
-└──────┬──────┘
-       ↓
-┌─────────────┐
-│ Repository  │ ← Business Logic
-└──────┬──────┘
-       ↓
-┌─────────────┐
-│     DAO     │ ← Data Access
-└──────┬──────┘
-       ↓
-┌─────────────┐
-│   SQLite    │ ← Database
-└─────────────┘
+QR payload:
+```json
+{"v":1,"eventId":"demo-graduation","guestId":"GUEST-001"}
 ```
 
----
+لا يتضمن QR الاسم أو الرقم القومي. هو معرف تذكرة، وليس توقيعًا أمنيًا.
+النسخة الحالية تخزن SQLite محليًا دون تشفير إضافي أو تسجيل دخول.
 
-## 📦 Dependencies
-```yaml
-dependencies:
-  flutter_bloc: ^8.1.3
-  sqflite: ^2.3.0
-  excel: ^4.0.3
-  file_picker: ^6.1.1
-  flutter_screenutil: ^5.9.0
-  # ... see pubspec.yaml for full list
+## المزامنة القادمة
+
+`EventSyncGateway` عقد مستقل لتحميل قائمة مرة واحدة ورفع الحضور على دفعة
+بعد المناسبة. لا يوجد endpoint أو إرسال فعلي الآن، ولا يتم مسح
+`pending_sync` أو إظهار نجاح رفع وهمي.
+
+عند توفر الخادم: أضف المصدر البعيد والمصادقة ومعرف دفعة ثابتًا لإعادة المحاولة،
+ثم امسح فقط العلامات التي أكد الخادم استقبالها. فشل الشبكة يحتفظ بكل الحضور
+المعلق. الطلبان هما المسار الطبيعي فقط؛ إعادة المحاولة قد تحتاج طلبات إضافية.
+
+منع التكرار حاليًا على **الجهاز نفسه**. عدة أجهزة تعمل بلا اتصال لا تستطيع
+تبادل حالة الحضور؛ يلزم تصميم تنسيق منفصل قبل استخدام عدة بوابات لنفس القائمة.
+
+## المنصات والتحقق
+
+- Android وiOS: SQLite ومسح الكاميرا، مع إعداد وصف/إذن الكاميرا.
+- macOS: إعداد SQLite ووصف الكاميرا وentitlement؛ يحتاج تحققًا على Mac.
+- Windows وLinux: SQLite عبر FFI، وعرض التذاكر وتجربتها بلصق الرمز.
+  حزمة الكاميرا المستخدمة لا تدعم هاتين المنصتين.
+- Web ليس هدفًا مدعومًا لهذه النسخة المحلية.
+
+اختبارات محددة للميزات الجديدة:
+```sh
+flutter analyze
+flutter test test/domain/guest_policy_test.dart test/data/local_guest_repository_test.dart test/presentation/cubit_lifecycle_test.dart test/presentation/app_flow_test.dart
+flutter build apk --debug
 ```
 
----
+تغطي الاختبارات: حالات QR، البحث العربي، الحقول الناقصة، منع المسح المتزامن،
+rollback، الترحيل وإعادة فتح SQLite، عمر Cubit، النتائج القديمة، ومسار المستخدم
+والشاشة الصغيرة مع تكبير النص. يلزم أيضًا اختبار فعلي لكاميرا هاتف وصلاحياتها
+في الضوء الواقعي قبل الاستخدام في مناسبة.
 
-## 🎯 Key Features Explained
-
-### 1. Excel Import
-- Supports `.xlsx` and `.csv` formats
-- Bulk insert with batch operations for performance
-- Automatic data validation
-
-### 2. Guest Verification
-- QR code scanning (ready for integration)
-- Duplicate entry prevention
-- Real-time status updates
-
-### 3. Dashboard Statistics
-- Total guests count
-- Verified entries tracking
-- Remaining guests calculation
-- Companion tracking
-
----
-
-## 🔄 State Management Flow
-```dart
-// Example: Guest Verification Flow
-User Scans QR → ScanCubit.checkGuest()
-                    ↓
-              Repository.verifyGuest()
-                    ↓
-              DAO.getGuestById()
-                    ↓
-              SQLite Query
-                    ↓
-              Update Status
-                    ↓
-              Emit New State
-                    ↓
-              UI Updates
-```
-
----
+معاينة UI اختيارية على Windows في بيئة التطوير:
+`flutter test --dart-define=CAPTURE_UI=true test/presentation/app_flow_test.dart`.
+تُحفظ داخل `build/review/`؛ تستخدم خطوط النظام للاختبار البصري فقط.
